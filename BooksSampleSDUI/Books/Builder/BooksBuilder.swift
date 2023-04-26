@@ -11,7 +11,7 @@ import UIKit
 struct BooksBuilder: ViewControllerBuilder {
 
     func build() -> UIViewController {
-        let service = service(isMock: false)
+        let service = service(isMock: true)
 
         return BooksViewController(service: service)
     }
