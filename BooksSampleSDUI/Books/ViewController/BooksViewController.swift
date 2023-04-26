@@ -5,19 +5,25 @@
 //  Created by Maksim Ivanov on 26.04.2023.
 //
 
+import Combine
 import DivKit
 import LayoutKit
 import UIKit
 
 final class BooksViewController: UIViewController {
 
-    private let data: Data
+    private let service: BooksSDUIService
 
-    private var divHostView: DivHostView!
-    private var components: DivKitComponents!
+    private lazy var divHostView = DivHostView(components: components)
+    private let components = DivKitComponents(
+        updateCardAction: nil,
+        urlOpener: { UIApplication.shared.open($0) }
+    )
 
-    init(_ data: Data) {
-        self.data = data
+    private var cancellables: Set<AnyCancellable> = []
+
+    init(service: BooksSDUIService) {
+        self.service = service
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -28,21 +34,26 @@ final class BooksViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        components = DivKitComponents(
-            updateCardAction: nil,
-            urlOpener: { UIApplication.shared.open($0) }
-        )
-        divHostView = DivHostView(components: components)
 
-        if let cards = try? DivJson.loadCards(data) {
-            view.addSubview(divHostView)
-            divHostView.setData(cards)
-        }
+        service.fetchUIData()
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { _ in
+
+            }, receiveValue: { data in
+                self.setData(data)
+            }).store(in: &self.cancellables)
     }
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         divHostView.frame = view.bounds.inset(by: view.safeAreaInsets)
+    }
+
+    private func setData(_ data: Data) {
+        if let cards = try? DivJson.loadCards(data) {
+            view.addSubview(divHostView)
+            divHostView.setData(cards)
+        }
     }
 }
 
