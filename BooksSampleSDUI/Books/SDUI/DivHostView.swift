@@ -1,78 +1,14 @@
 //
-//  ViewController.swift
+//  DivHostView.swift
 //  BooksSampleSDUI
 //
-//  Created by Maksim Ivanov on 13.04.2023.
+//  Created by Maksim Ivanov on 26.04.2023.
 //
 
 import BasePublic
 import DivKit
 import LayoutKit
-import Serialization
 import UIKit
-
-final class BooksViewController: UIViewController {
-
-    private var divHostView: DivHostView!
-    private var components: DivKitComponents!
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .white
-        components = DivKitComponents(
-            updateCardAction: nil,
-            urlOpener: { UIApplication.shared.open($0) }
-        )
-        divHostView = DivHostView(components: components)
-
-        if let cards = try? DivJson.loadCards() {
-            view.addSubview(divHostView)
-            divHostView.setData(cards)
-        }
-    }
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        divHostView.frame = view.bounds.inset(by: view.safeAreaInsets)
-    }
-}
-
-extension BooksViewController: UIActionEventPerforming {
-    func perform(uiActionEvent event: UIActionEvent, from _: AnyObject) {
-        switch event.payload {
-        case let .divAction(params):
-            components.handleActions(params: params)
-            divHostView.reloadItem(cardId: params.cardId)
-        case .empty,
-                .url,
-                .menu,
-                .json,
-                .composite:
-            break
-        }
-    }
-}
-
-struct DivJson: Deserializable {
-    let templates: [String: Any]
-    let cards: [[String: Any]]
-
-    init(dictionary: [String: Any]) throws {
-        templates = try dictionary.getOptionalField("templates") ?? [:]
-        cards = try dictionary.getArray("cards")
-    }
-
-    static func loadCards() throws -> [DivData] {
-        let data = Data(books_div_json.utf8)
-        let divJson = try DivJson(JSONData: data)
-        return divJson.cards.compactMap {
-            DivData.resolve(
-                card: $0,
-                templates: divJson.templates
-            ).value
-        }
-    }
-}
 
 final class DivHostView: UICollectionView {
     private let components: DivKitComponents
