@@ -15,10 +15,10 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
 
-        let booksViewController = BooksViewController()
+        let booksBuilder = BooksBuilder()
 
         window = UIWindow(windowScene: windowScene)
-        window?.rootViewController = booksViewController
+        window?.rootViewController = booksBuilder.build()
         window?.makeKeyAndVisible()
     }
 }
