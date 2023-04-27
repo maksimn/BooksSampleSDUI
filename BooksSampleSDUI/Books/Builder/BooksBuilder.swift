@@ -13,7 +13,13 @@ struct BooksBuilder: ViewControllerBuilder {
     func build() -> UIViewController {
         let service = service(isMock: true)
 
-        return BooksViewController(service: service)
+        let booksViewController = BooksViewController(
+            title: "КНИГИ",
+            service: service,
+            logger: LoggerImpl(category: "Books")
+        )
+
+        return UINavigationController(rootViewController: booksViewController)
     }
 
     private func service(isMock: Bool) -> BooksSDUIService {

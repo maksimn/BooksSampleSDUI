@@ -5,13 +5,11 @@
 //  Created by Maksim Ivanov on 26.04.2023.
 //
 
-import Combine
 import CoreModule
-import Foundation
 
 protocol BooksSDUIService {
 
-    func fetchUIData() -> AnyPublisher<Data, Error>
+    func fetchUIData() -> DataPublisher
 }
 
 struct BooksSDUIServiceImpl: BooksSDUIService {
@@ -22,14 +20,24 @@ struct BooksSDUIServiceImpl: BooksSDUIService {
         self.httpClient = httpClient
     }
 
-    func fetchUIData() -> AnyPublisher<Data, Error> {
+    func fetchUIData() -> DataPublisher {
         httpClient.send(
             Http(
                 urlString: "http://maksimn.github.io/elizarov/books-ui.json",
                 method: "GET"
             )
         )
-        .map { $0.data }
+        .tryMap {
+            guard $0.response.statusCode == 200 else {
+                throw _Error.booksSDUIServiceBadRequest
+            }
+
+            return $0.data
+        }
         .eraseToAnyPublisher()
+    }
+
+    private enum _Error: Error {
+        case booksSDUIServiceBadRequest
     }
 }
