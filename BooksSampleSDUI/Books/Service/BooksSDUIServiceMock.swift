@@ -10,7 +10,7 @@ import Foundation
 
 struct BooksSDUIServiceMock: BooksSDUIService {
 
-    func fetchUIData() -> AnyPublisher<Data, Error> {
+    func fetchUIData() -> DataPublisher {
         Just(Data(booksDivJson().utf8))
             .tryMap { $0 }
             .eraseToAnyPublisher()
@@ -123,6 +123,12 @@ struct BooksSDUIServiceMock: BooksSDUIService {
                 "text_color": "#ffffff",
                 "image_url": "https://irecommend.ru/sites/default/files/product-images/4449/00.png"
               }
+            ],
+            "actions": [
+                {
+                    "log_id": "show_details_1",
+                    "url": "http://maksimn.github.io/elizarov/books/book-1.json"
+                }
             ]
           }
         }
@@ -145,6 +151,12 @@ struct BooksSDUIServiceMock: BooksSDUIService {
                 "text_color": "#ffffff",
                 "image_url": "https://i.livelib.ru/boocover/1000315110/200/b139/Mihail_Elizarov__Pasternak.jpg"
               }
+            ],
+            "actions": [
+                {
+                    "log_id": "show_details_2",
+                    "url": "http://maksimn.github.io/elizarov/books/book-2.json"
+                }
             ]
           }
         }
@@ -167,6 +179,12 @@ struct BooksSDUIServiceMock: BooksSDUIService {
                 "text_color": "#222222",
                 "image_url": "https://cv0.litres.ru/pub/c/elektronnaya-kniga/cover_max1500/4368305-mihail-elizarov-krasnaya-plenka.jpg"
               }
+            ],
+            "actions": [
+                {
+                    "log_id": "show_details_3",
+                    "url": "http://maksimn.github.io/elizarov/books/book-3.json"
+                }
             ]
           }
         }
@@ -189,6 +207,12 @@ struct BooksSDUIServiceMock: BooksSDUIService {
                 "text_color": "#ffffff",
                 "image_url": "https://i.livelib.ru/boocover/1000320584/200/5810/Mihail_Elizarov__Bibliotekar.jpg"
               }
+            ],
+            "actions": [
+                {
+                    "log_id": "show_details_4",
+                    "url": "http://maksimn.github.io/elizarov/books/book-4.json"
+                }
             ]
           }
         }
@@ -211,6 +235,12 @@ struct BooksSDUIServiceMock: BooksSDUIService {
                 "text_color": "#ffffff",
                 "image_url": "https://i.livelib.ru/boocover/1000311720/200/5859/Mihail_Elizarov__Kubiki_sbornik.jpg"
               }
+            ],
+            "actions": [
+                {
+                    "log_id": "show_details_5",
+                    "url": "http://maksimn.github.io/elizarov/books/book-5.json"
+                }
             ]
           }
         }
@@ -233,6 +263,12 @@ struct BooksSDUIServiceMock: BooksSDUIService {
                 "text_color": "#ffffff",
                 "image_url": "https://i.livelib.ru/boocover/1001093871/200/ec9a/Mihail_Elizarov__Multiki.jpg"
               }
+            ],
+            "actions": [
+                {
+                    "log_id": "show_details_6",
+                    "url": "http://maksimn.github.io/elizarov/books/book-6.json"
+                }
             ]
           }
         }
@@ -255,6 +291,12 @@ struct BooksSDUIServiceMock: BooksSDUIService {
                 "text_color": "#222222",
                 "image_url": "https://s1.livelib.ru/boocover/1000488263/o/ea9b/Mihail_Elizarov__Burattini._Fashizm_proshel.jpeg"
               }
+            ],
+            "actions": [
+                {
+                    "log_id": "show_details_7",
+                    "url": "http://maksimn.github.io/elizarov/books/book-7.json"
+                }
             ]
           }
         }
@@ -277,6 +319,12 @@ struct BooksSDUIServiceMock: BooksSDUIService {
                 "text_color": "#ffffff",
                 "image_url": "https://j.livelib.ru/boocover/1000565906/200/7a1e/Mihail_Elizarov__My_vyshli_pokurit_na_17_let..._sbornik.jpg"
               }
+            ],
+            "actions": [
+                {
+                    "log_id": "show_details_8",
+                    "url": "http://maksimn.github.io/elizarov/books/book-8.json"
+                }
             ]
           }
         }

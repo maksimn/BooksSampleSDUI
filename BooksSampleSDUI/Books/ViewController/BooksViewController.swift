@@ -6,6 +6,7 @@
 //
 
 import Combine
+import CoreModule
 import DivKit
 import LayoutKit
 import UIKit
@@ -13,18 +14,23 @@ import UIKit
 final class BooksViewController: UIViewController {
 
     private let service: BooksSDUIService
+    private let logger: Logger
 
     private lazy var divHostView = DivHostView(components: components)
-    private let components = DivKitComponents(
+    private lazy var components = DivKitComponents(
         updateCardAction: nil,
-        urlOpener: { UIApplication.shared.open($0) }
+        urlOpener: { [weak self] url in
+            self?.process(url)
+        }
     )
 
     private var cancellables: Set<AnyCancellable> = []
 
-    init(service: BooksSDUIService) {
+    init(title: String, service: BooksSDUIService, logger: Logger) {
         self.service = service
+        self.logger = logger
         super.init(nibName: nil, bundle: nil)
+        navigationItem.title = title
     }
 
     required init?(coder: NSCoder) {
@@ -35,11 +41,21 @@ final class BooksViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
 
+        logger.debug("FETCH BOOKS UI START")
+
         service.fetchUIData()
             .receive(on: DispatchQueue.main)
-            .sink(receiveCompletion: { _ in
+            .sink(receiveCompletion: { completion in
+                switch completion {
+                case .failure(let error):
+                    self.logger.log("FETCH BOOKS UI ERROR: \(error)", level: .error)
 
+                case .finished:
+                    break
+                }
             }, receiveValue: { data in
+                self.logger.debug("FETCH BOOKS UI SUCCESS, DATA: \(String(decoding: data, as: UTF8.self))")
+
                 self.setData(data)
             }).store(in: &self.cancellables)
     }
@@ -54,6 +70,10 @@ final class BooksViewController: UIViewController {
             view.addSubview(divHostView)
             divHostView.setData(cards)
         }
+    }
+
+    private func process(_ url: URL) {
+        logger.debug("\(url)")
     }
 }
 
