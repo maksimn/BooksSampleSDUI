@@ -21,6 +21,10 @@ final class DivHostView: UICollectionView {
     }
 
     private func setupCollectionView() {
+        if let collectionViewFlowLayout = collectionViewLayout as? UICollectionViewFlowLayout {
+            collectionViewFlowLayout.minimumLineSpacing = 0
+            collectionViewFlowLayout.minimumInteritemSpacing = 0
+        }
         register(Cell.self, forCellWithReuseIdentifier: Cell.reuseIdentifier)
         dataSource = self
         delegate = self
