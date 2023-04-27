@@ -7,29 +7,28 @@
 
 import CoreModule
 
-protocol BooksSDUIService {
+protocol SDUIService {
 
     func fetchUIData() -> DataPublisher
 }
 
-struct BooksSDUIServiceImpl: BooksSDUIService {
+struct SDUIServiceImpl: SDUIService {
 
+    private let url: String
     private let httpClient: HttpClient
 
-    init(httpClient: HttpClient) {
+    init(url: String, httpClient: HttpClient) {
+        self.url = url
         self.httpClient = httpClient
     }
 
     func fetchUIData() -> DataPublisher {
         httpClient.send(
-            Http(
-                urlString: "http://maksimn.github.io/elizarov/books-ui.json",
-                method: "GET"
-            )
+            Http(urlString: url, method: "GET")
         )
         .tryMap {
             guard $0.response.statusCode == 200 else {
-                throw _Error.booksSDUIServiceBadRequest
+                throw _Error.SDUIServiceBadRequest
             }
 
             return $0.data
@@ -38,6 +37,6 @@ struct BooksSDUIServiceImpl: BooksSDUIService {
     }
 
     private enum _Error: Error {
-        case booksSDUIServiceBadRequest
+        case SDUIServiceBadRequest
     }
 }

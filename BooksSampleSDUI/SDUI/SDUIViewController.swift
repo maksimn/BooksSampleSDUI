@@ -11,26 +11,35 @@ import DivKit
 import LayoutKit
 import UIKit
 
-final class BooksViewController: UIViewController {
+final class SDUIViewController: UIViewController {
 
-    private let service: BooksSDUIService
+    private let urlHandler: (URL) -> Void
+    private let service: SDUIService
+    private let fetchUIActionName: String
     private let logger: Logger
 
     private lazy var divHostView = DivHostView(components: components)
     private lazy var components = DivKitComponents(
         updateCardAction: nil,
         urlOpener: { [weak self] url in
-            self?.process(url)
+            self?.urlHandler(url)
         }
     )
 
     private var cancellables: Set<AnyCancellable> = []
 
-    init(title: String, service: BooksSDUIService, logger: Logger) {
+    init(title: String,
+         urlHandler: @escaping (URL) -> Void,
+         service: SDUIService,
+         fetchUIActionName: String,
+         logger: Logger) {
+        self.urlHandler = urlHandler
         self.service = service
+        self.fetchUIActionName = fetchUIActionName
         self.logger = logger
         super.init(nibName: nil, bundle: nil)
         navigationItem.title = title
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
     }
 
     required init?(coder: NSCoder) {
@@ -39,30 +48,33 @@ final class BooksViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(red: 0.97, green: 0.97, blue: 0.95, alpha: 1.0)
+        fetchUI()
+    }
 
-        logger.debug("FETCH BOOKS UI START")
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        divHostView.frame = view.bounds.inset(by: view.safeAreaInsets)
+    }
+
+    private func fetchUI() {
+        logger.debug("\(fetchUIActionName) START")
 
         service.fetchUIData()
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { completion in
                 switch completion {
                 case .failure(let error):
-                    self.logger.log("FETCH BOOKS UI ERROR: \(error)", level: .error)
+                    self.logger.log("\(self.fetchUIActionName) ERROR: \(error)", level: .error)
 
                 case .finished:
                     break
                 }
             }, receiveValue: { data in
-                self.logger.debug("FETCH BOOKS UI SUCCESS, DATA: \(String(decoding: data, as: UTF8.self))")
+                self.logger.debug("\(self.fetchUIActionName) SUCCESS, DATA: \(String(decoding: data, as: UTF8.self))")
 
                 self.setData(data)
             }).store(in: &self.cancellables)
-    }
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        divHostView.frame = view.bounds.inset(by: view.safeAreaInsets)
     }
 
     private func setData(_ data: Data) {
@@ -71,13 +83,9 @@ final class BooksViewController: UIViewController {
             divHostView.setData(cards)
         }
     }
-
-    private func process(_ url: URL) {
-        logger.debug("\(url)")
-    }
 }
 
-extension BooksViewController: UIActionEventPerforming {
+extension SDUIViewController: UIActionEventPerforming {
 
     func perform(uiActionEvent event: UIActionEvent, from _: AnyObject) {
         switch event.payload {
