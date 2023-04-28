@@ -11,6 +11,8 @@ import DivKit
 import LayoutKit
 import UIKit
 
+private let emptyHandler: (URL) -> Void = { _ in }
+
 final class SDUIViewController: UIViewController {
 
     private let urlHandler: (URL) -> Void
@@ -29,7 +31,7 @@ final class SDUIViewController: UIViewController {
     private var cancellables: Set<AnyCancellable> = []
 
     init(title: String,
-         urlHandler: @escaping (URL) -> Void,
+         urlHandler: @escaping (URL) -> Void = emptyHandler,
          service: DataService,
          fetchUIActionName: String,
          logger: Logger) {

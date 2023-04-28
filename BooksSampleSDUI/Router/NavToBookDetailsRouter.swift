@@ -7,7 +7,8 @@
 
 import UIKit
 
-final class NavToBookDetailsRouter<Builder> where Builder: ParamViewControllerBuilder, Builder.Param == String {
+final class NavToBookDetailsRouter<Builder> where Builder: ParametrizedViewControllerBuilder,
+                                                  Builder.Parameter == String {
 
     private weak var navigationController: UINavigationController?
     private let builder: Builder
@@ -17,8 +18,8 @@ final class NavToBookDetailsRouter<Builder> where Builder: ParamViewControllerBu
         self.builder = builder
     }
 
-    func navigate(_ param: String) {
-        let bookDetailsViewController = builder.build(param)
+    func navigate(_ url: String) {
+        let bookDetailsViewController = builder.build(url)
 
         navigationController?.pushViewController(bookDetailsViewController, animated: true)
     }
