@@ -8,21 +8,16 @@
 import CoreModule
 import UIKit
 
-protocol BookDetailsBuilder {
+struct BookDetailsBuilder: ParamViewControllerBuilder {
 
-    func build(_ url: String) -> UIViewController
-}
-
-struct BookDetailsBuilderImpl: BookDetailsBuilder {
-
-    func build(_ url: String) -> UIViewController {
-        let service = service(url)
+    func build(_ param: String) -> UIViewController {
+        let service = service(param)
 
         let sduiViewController = SDUIViewController(
             title: "Описание",
             urlHandler: { _ in },
             service: service,
-            fetchUIActionName: "FETCH BOOK UI FROM \(url)",
+            fetchUIActionName: "FETCH BOOK UI FROM \(param)",
             logger: LoggerImpl(category: "BookDetails")
         )
 
