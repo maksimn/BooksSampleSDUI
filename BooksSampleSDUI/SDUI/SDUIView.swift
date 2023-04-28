@@ -10,7 +10,7 @@ import DivKit
 import LayoutKit
 import UIKit
 
-final class DivHostView: UICollectionView {
+final class SDUIView: UICollectionView {
     private let components: DivKitComponents
     private var items: [Item] = []
 
@@ -101,7 +101,7 @@ final class DivHostView: UICollectionView {
     }
 }
 
-extension DivHostView: UICollectionViewDataSource {
+extension SDUIView: UICollectionViewDataSource {
     func collectionView(
         _: UICollectionView,
         numberOfItemsInSection _: Int
@@ -123,7 +123,7 @@ extension DivHostView: UICollectionViewDataSource {
     }
 }
 
-extension DivHostView: UICollectionViewDelegateFlowLayout {
+extension SDUIView: UICollectionViewDelegateFlowLayout {
     func collectionView(
         _: UICollectionView,
         layout _: UICollectionViewLayout,

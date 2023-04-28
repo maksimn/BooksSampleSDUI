@@ -14,11 +14,11 @@ import UIKit
 final class SDUIViewController: UIViewController {
 
     private let urlHandler: (URL) -> Void
-    private let service: SDUIService
+    private let service: DataService
     private let fetchUIActionName: String
     private let logger: Logger
 
-    private lazy var divHostView = DivHostView(components: components)
+    private lazy var divHostView = SDUIView(components: components)
     private lazy var components = DivKitComponents(
         updateCardAction: nil,
         urlOpener: { [weak self] url in
@@ -30,7 +30,7 @@ final class SDUIViewController: UIViewController {
 
     init(title: String,
          urlHandler: @escaping (URL) -> Void,
-         service: SDUIService,
+         service: DataService,
          fetchUIActionName: String,
          logger: Logger) {
         self.urlHandler = urlHandler
@@ -60,7 +60,7 @@ final class SDUIViewController: UIViewController {
     private func fetchUI() {
         logger.debug("\(fetchUIActionName) START")
 
-        service.fetchUIData()
+        service.fetchData()
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { completion in
                 switch completion {
@@ -78,7 +78,7 @@ final class SDUIViewController: UIViewController {
     }
 
     private func setData(_ data: Data) {
-        if let cards = try? DivJson.loadCards(data) {
+        if let cards = try? SDUIJson.loadCards(data) {
             view.addSubview(divHostView)
             divHostView.setData(cards)
         }
