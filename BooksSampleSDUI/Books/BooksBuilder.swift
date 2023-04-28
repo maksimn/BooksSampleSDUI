@@ -15,14 +15,15 @@ struct BooksBuilder: ViewControllerBuilder {
 
         let service = service(url)
         let navigationController = UINavigationController()
+        let router = NavToBookDetailsRouter(
+            navigationController: navigationController,
+            builder: BookDetailsBuilder()
+        )
 
         let sduiViewController = SDUIViewController(
             title: "КНИГИ",
             urlHandler: { url in
-                let bookDetailsBuilder = BookDetailsBuilderImpl()
-                let bookDetailsViewController = bookDetailsBuilder.build(url.absoluteString)
-
-                navigationController.pushViewController(bookDetailsViewController, animated: true)
+                router.navigate(url.absoluteString)
             },
             service: service,
             fetchUIActionName: "FETCH BOOKS UI",
