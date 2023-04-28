@@ -7,12 +7,17 @@
 
 import CoreModule
 
-protocol SDUIService {
+protocol DataService {
 
-    func fetchUIData() -> DataPublisher
+    func fetchData() -> DataPublisher
 }
 
-struct SDUIServiceImpl: SDUIService {
+func service(isMock: Bool = false, _ url: String) -> DataService {
+    isMock ? DataServiceMock(url) :
+             DataServiceImpl(url: url, httpClient: HttpClientImpl())
+}
+
+struct DataServiceImpl: DataService {
 
     private let url: String
     private let httpClient: HttpClient
@@ -22,13 +27,13 @@ struct SDUIServiceImpl: SDUIService {
         self.httpClient = httpClient
     }
 
-    func fetchUIData() -> DataPublisher {
+    func fetchData() -> DataPublisher {
         httpClient.send(
             Http(urlString: url, method: "GET")
         )
         .tryMap {
             guard $0.response.statusCode == 200 else {
-                throw _Error.SDUIServiceBadRequest
+                throw _Error.DataServiceBadRequest
             }
 
             return $0.data
@@ -37,6 +42,6 @@ struct SDUIServiceImpl: SDUIService {
     }
 
     private enum _Error: Error {
-        case SDUIServiceBadRequest
+        case DataServiceBadRequest
     }
 }

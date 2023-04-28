@@ -9,7 +9,7 @@ import Foundation
 import DivKit
 import Serialization
 
-struct DivJson: Deserializable {
+struct SDUIJson: Deserializable {
     let templates: [String: Any]
     let cards: [[String: Any]]
 
@@ -19,7 +19,7 @@ struct DivJson: Deserializable {
     }
 
     static func loadCards(_ data: Data) throws -> [DivData] {
-        let divJson = try DivJson(JSONData: data)
+        let divJson = try SDUIJson(JSONData: data)
         return divJson.cards.compactMap {
             DivData.resolve(
                 card: $0,

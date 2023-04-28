@@ -11,7 +11,9 @@ import UIKit
 struct BooksBuilder: ViewControllerBuilder {
 
     func build() -> UIViewController {
-        let service = service(isMock: true)
+        let url = "http://maksimn.github.io/elizarov/books-ui.json"
+
+        let service = service(url)
         let navigationController = UINavigationController()
 
         let sduiViewController = SDUIViewController(
@@ -30,12 +32,5 @@ struct BooksBuilder: ViewControllerBuilder {
         navigationController.setViewControllers([sduiViewController], animated: false)
 
         return navigationController
-    }
-
-    private func service(isMock: Bool) -> SDUIService {
-        let url = "http://maksimn.github.io/elizarov/books-ui.json"
-
-        return isMock ? SDUIServiceMock("books") :
-                        SDUIServiceImpl(url: url, httpClient: HttpClientImpl())
     }
 }

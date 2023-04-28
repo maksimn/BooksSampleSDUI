@@ -16,7 +16,7 @@ protocol BookDetailsBuilder {
 struct BookDetailsBuilderImpl: BookDetailsBuilder {
 
     func build(_ url: String) -> UIViewController {
-        let service = service(isMock: true, url)
+        let service = service(url)
 
         let sduiViewController = SDUIViewController(
             title: "Описание",
@@ -27,10 +27,5 @@ struct BookDetailsBuilderImpl: BookDetailsBuilder {
         )
 
         return sduiViewController
-    }
-
-    private func service(isMock: Bool, _ url: String) -> SDUIService {
-        isMock ? SDUIServiceMock(url) :
-                 SDUIServiceImpl(url: url, httpClient: HttpClientImpl())
     }
 }
