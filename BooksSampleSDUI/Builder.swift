@@ -7,9 +7,9 @@
 
 import UIKit
 
-protocol ParamViewControllerBuilder {
+protocol ParametrizedViewControllerBuilder {
 
-    associatedtype Param
+    associatedtype Parameter
 
-    func build(_ param: Param) -> UIViewController
+    func build(_ parameter: Parameter) -> UIViewController
 }
