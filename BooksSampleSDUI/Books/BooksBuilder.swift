@@ -17,7 +17,7 @@ struct BooksBuilder: ViewControllerBuilder {
         let navigationController = UINavigationController()
         let router = NavToBookDetailsRouter(
             navigationController: navigationController,
-            builder: BookDetailsBuilder()
+            bookDetailsBuilder: BookDetailsBuilder()
         )
 
         let sduiViewController = SDUIViewController(
