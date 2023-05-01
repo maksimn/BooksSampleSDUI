@@ -5,40 +5,43 @@
 //  Created by Maksim Ivanov on 26.04.2023.
 //
 
-import Combine
-import CoreModule
+import Foundation
 import DivKit
 import LayoutKit
+import UDF
 import UIKit
 
-private let emptyHandler: (URL) -> Void = { _ in }
+final class SDUIViewController: UIViewController, ViewComponent {
 
-final class SDUIViewController: UIViewController {
+    typealias Props = Data?
 
-    private let urlHandler: (URL) -> Void
-    private let service: DataService
-    private let fetchUIActionName: String
-    private let logger: Logger
+    var props: Data? = nil {
+        didSet {
+            guard isViewLoaded else { return }
+            guard let uiData = props else { return }
+
+            setData(uiData)
+        }
+    }
+
+    private let dispatch: (Action) -> Void
+    private let urlOpener: (URL) -> Void
 
     private lazy var divHostView = SDUIView(components: components)
     private lazy var components = DivKitComponents(
         updateCardAction: nil,
         urlOpener: { [weak self] url in
-            self?.urlHandler(url)
+            self?.urlOpener(url)
         }
     )
 
-    private var cancellables: Set<AnyCancellable> = []
+    var disposer = Disposer()
 
     init(title: String,
-         urlHandler: @escaping (URL) -> Void = emptyHandler,
-         service: DataService,
-         fetchUIActionName: String,
-         logger: Logger) {
-        self.urlHandler = urlHandler
-        self.service = service
-        self.fetchUIActionName = fetchUIActionName
-        self.logger = logger
+         dispatch: @escaping (Action) -> Void,
+         urlOpener: @escaping (URL) -> Void) {
+        self.dispatch = dispatch
+        self.urlOpener = urlOpener
         super.init(nibName: nil, bundle: nil)
         navigationItem.title = title
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
@@ -51,32 +54,13 @@ final class SDUIViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor(red: 0.97, green: 0.97, blue: 0.95, alpha: 1.0)
-        fetchUI()
+
+        dispatch(SDUI.Action.fetchUIData)
     }
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         divHostView.frame = view.bounds.inset(by: view.safeAreaInsets)
-    }
-
-    private func fetchUI() {
-        logger.debug("\(fetchUIActionName) START")
-
-        service.fetchData()
-            .receive(on: DispatchQueue.main)
-            .sink(receiveCompletion: { completion in
-                switch completion {
-                case .failure(let error):
-                    self.logger.log("\(self.fetchUIActionName) ERROR: \(error)", level: .error)
-
-                case .finished:
-                    break
-                }
-            }, receiveValue: { data in
-                self.logger.debug("\(self.fetchUIActionName) SUCCESS, DATA: \(String(decoding: data, as: UTF8.self))")
-
-                self.setData(data)
-            }).store(in: &self.cancellables)
     }
 
     private func setData(_ data: Data) {

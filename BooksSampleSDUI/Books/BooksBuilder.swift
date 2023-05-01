@@ -11,24 +11,23 @@ import UIKit
 struct BooksBuilder: ViewControllerBuilder {
 
     func build() -> UIViewController {
-        let url = "http://maksimn.github.io/elizarov/books-ui.json"
-
-        let service = service(url)
+        let config = Config(isDataServiceMocked: false)
         let navigationController = UINavigationController()
         let router = NavToBookDetailsRouter(
             navigationController: navigationController,
-            bookDetailsBuilder: BookDetailsBuilder()
+            bookDetailsBuilder: BookDetailsBuilder(config: config)
         )
 
-        let sduiViewController = SDUIViewController(
+        let sduiDependency = SDUIDependency(
             title: "КНИГИ",
-            urlHandler: { url in
+            url: "http://maksimn.github.io/elizarov/books-ui.json",
+            urlOpener: { url in
                 router.navigate(url.absoluteString)
             },
-            service: service,
-            fetchUIActionName: "FETCH BOOKS UI",
-            logger: LoggerImpl(category: "Books")
+            config: config
         )
+        let sduiBuilder = SDUIBuilder(dependency: sduiDependency)
+        let sduiViewController = sduiBuilder.build()
 
         navigationController.setViewControllers([sduiViewController], animated: false)
 
