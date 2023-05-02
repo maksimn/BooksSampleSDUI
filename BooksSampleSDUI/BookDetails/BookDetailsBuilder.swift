@@ -10,15 +10,22 @@ import UIKit
 
 struct BookDetailsBuilder: ParametrizedViewControllerBuilder {
 
-    func build(_ url: String) -> UIViewController {
-        let service = service(url)
+    private let config: Config
 
-        let sduiViewController = SDUIViewController(
+    init(config: Config) {
+        self.config = config
+    }
+
+    func build(_ url: String) -> UIViewController {
+        let empty: (URL) -> Void = { _ in }
+        let sduiDependency = SDUIDependency(
             title: "Описание",
-            service: service,
-            fetchUIActionName: "FETCH BOOK UI FROM \(url)",
-            logger: LoggerImpl(category: "BookDetails")
+            url: url,
+            urlOpener: empty,
+            config: config
         )
+        let sduiBuilder = SDUIBuilder(dependency: sduiDependency)
+        let sduiViewController = sduiBuilder.build()
 
         return sduiViewController
     }
