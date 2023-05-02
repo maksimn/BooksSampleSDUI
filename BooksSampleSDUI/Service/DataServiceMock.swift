@@ -29,7 +29,7 @@ struct DataServiceMock: DataService {
     func fetchData() -> DataPublisher {
         var str = ""
 
-        if type == "books" {
+        if type == "http://maksimn.github.io/elizarov/books-ui.json" {
             str = booksDivJson()
         } else if type == "http://maksimn.github.io/elizarov/books/book-1.json" {
             str = bookTemplate(book1())
